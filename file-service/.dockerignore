@@ -1,0 +1,78 @@
+# Binaries
+
+_.exe
+_.exe~
+_.dll
+_.so
+\*.dylib
+file-management-service
+file-service
+
+# Test binary, built with `go test -c`
+
+\*.test
+
+# Output of the go coverage tool
+
+\*.out
+
+# Dependency directories
+
+vendor/
+
+# Go workspace file
+
+go.work
+
+# IDE and editor files
+
+.vscode/
+.idea/
+_.swp
+_.swo
+\*~
+
+# OS generated files
+
+.DS*Store
+.DS_Store?
+.*\*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+
+\*.log
+
+# Environment files
+
+.env
+.env.local
+.env.\*.local
+
+# Docker files (if you don't want to include them in the build context)
+
+Dockerfile
+.dockerignore
+
+# Git
+
+.git/
+.gitignore
+
+# Documentation
+
+README.md
+\*.md
+
+# Temporary files
+
+tmp/
+temp/
+
+# Exclude uploads directory
+
+uploads/\*
+!uploads/.gitkeep
