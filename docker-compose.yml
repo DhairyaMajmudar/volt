@@ -26,8 +26,8 @@ services:
   # Authentication Service
   auth-service:
     build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: auth-service/Dockerfile
     container_name: volt-auth-service
     ports:
       - "8080:8080"
@@ -38,7 +38,6 @@ services:
       - DB_USER=voltuser
       - DB_PASSWORD=voltpassword
       - DB_NAME=voltdb
-      - DB_SSLMODE=disable
       - JWT_SECRET=your-jwt-secret-key-here
     depends_on:
       voltdb:
@@ -63,8 +62,8 @@ services:
   # File Management Service
   file-service:
     build:
-      context: ./file-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: file-service/Dockerfile
     container_name: volt-file-service
     ports:
       - "8081:8081"
@@ -75,9 +74,7 @@ services:
       - DB_USER=voltuser
       - DB_PASSWORD=voltpassword
       - DB_NAME=voltdb
-      - DB_SSLMODE=disable
       - JWT_SECRET=your-jwt-secret-key-here
-      - UPLOAD_DIR=/app/uploads
     volumes:
       - file_uploads:/root/uploads
     depends_on:

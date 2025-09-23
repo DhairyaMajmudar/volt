@@ -4,21 +4,21 @@ WORKDIR /app
 
 RUN apk add --no-cache git
 
-COPY go.mod go.sum ./
+COPY . .
+
+WORKDIR /app/file-service
+
+RUN go work sync
 
 RUN go mod download
 
-COPY . .
-
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o file-service .
+RUN CGO_ENABLED=0 GOOS=linux go build -o file-service .
 
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
-
 WORKDIR /root/
 
-COPY --from=builder /app/file-service .
+COPY --from=builder /app/file-service/file-service .
 
 RUN mkdir -p /root/uploads
 
