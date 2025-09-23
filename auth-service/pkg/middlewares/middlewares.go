@@ -34,3 +34,36 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, "Authorization header required", http.StatusUnauthorized)
+			return
+		}
+
+		tokenParts := strings.Split(authHeader, " ")
+		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
+			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+			return
+		}
+
+		token := tokenParts[1]
+		claims, err := utils.ValidateJWT(token)
+		if err != nil {
+			http.Error(w, "Invalid token: "+err.Error(), http.StatusUnauthorized)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), UserContextKey, claims)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func GetUserFromContext(r *http.Request) *utils.Claims {
+	if claims, ok := r.Context().Value(UserContextKey).(*utils.Claims); ok {
+		return claims
+	}
+	return nil
+}
