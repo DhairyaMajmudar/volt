@@ -1,0 +1,42 @@
+# Git
+
+.git/
+.gitignore
+
+# IDE and editor files
+
+.vscode/
+.idea/
+_.swp
+_.swo
+\*~
+
+# OS generated files
+
+.DS*Store
+.DS_Store?
+.*\*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+
+\*.log
+
+# Environment files
+
+.env
+.env.local
+.env.\*.local
+
+# Documentation
+
+README.md
+\*.md
+
+# Temporary files
+
+tmp/
+temp/

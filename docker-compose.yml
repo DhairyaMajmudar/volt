@@ -1,0 +1,113 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database (VoltDB)
+  voltdb:
+    image: postgres:15-alpine
+    container_name: voltdb
+    environment:
+      POSTGRES_DB: voltdb
+      POSTGRES_USER: voltuser
+      POSTGRES_PASSWORD: voltpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - voltdb_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - volt-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voltuser -d voltdb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Authentication Service
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: volt-auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_HOST=voltdb
+      - DB_PORT=5432
+      - DB_USER=voltuser
+      - DB_PASSWORD=voltpassword
+      - DB_NAME=voltdb
+      - DB_SSLMODE=disable
+      - JWT_SECRET=your-jwt-secret-key-here
+    depends_on:
+      voltdb:
+        condition: service_healthy
+    networks:
+      - volt-network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/api/v1/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # File Management Service
+  file-service:
+    build:
+      context: ./file-service
+      dockerfile: Dockerfile
+    container_name: volt-file-service
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+      - DB_HOST=voltdb
+      - DB_PORT=5432
+      - DB_USER=voltuser
+      - DB_PASSWORD=voltpassword
+      - DB_NAME=voltdb
+      - DB_SSLMODE=disable
+      - JWT_SECRET=your-jwt-secret-key-here
+      - UPLOAD_DIR=/app/uploads
+    volumes:
+      - file_uploads:/root/uploads
+    depends_on:
+      voltdb:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    networks:
+      - volt-network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8081/api/v1/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  voltdb_data:
+    driver: local
+  file_uploads:
+    driver: local
+
+networks:
+  volt-network:
+    driver: bridge
