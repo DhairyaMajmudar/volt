@@ -1,4 +1,4 @@
-module volt/db
+module github.com/DhairyaMajmudar/volt/db
 
 go 1.24.0
 

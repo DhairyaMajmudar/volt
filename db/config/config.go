@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"volt/db/models"
+	"github.com/DhairyaMajmudar/volt/db/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
