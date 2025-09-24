@@ -32,10 +32,22 @@ func GetDatabaseConfig() *DatabaseConfig {
 }
 
 func InitDatabase() error {
-	config := GetDatabaseConfig()
+	mode := GetEnv("APP_MODE", "development")
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
-		config.Host, config.User, config.Password, config.DBName, config.Port)
+	var dsn string
+
+	if mode == "production" {
+		dsn = GetEnv("DATABASE_URL", "")
+		if dsn == "" {
+			return fmt.Errorf("DATABASE_URL environment variable is not set")
+		}
+		fmt.Printf("Running in production mode with DATABASE_URL: %s\n", dsn)
+	} else {
+		config := GetDatabaseConfig()
+		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
+			config.Host, config.User, config.Password, config.DBName, config.Port)
+		fmt.Printf("Running in development mode with DSN: %s\n", dsn)
+	}
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
