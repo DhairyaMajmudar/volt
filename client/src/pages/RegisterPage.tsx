@@ -5,7 +5,7 @@ import { FormRegister } from '@/components/Forms/FormRegister';
 import type { FormData, FormErrors } from '@/utils/validateForm';
 import { validateForm } from '@/utils/validateForm';
 
-const RegisterPage = () => {
+export const RegisterPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     username: '',
@@ -114,5 +114,3 @@ const RegisterPage = () => {
     </div>
   );
 };
-
-export default RegisterPage;
