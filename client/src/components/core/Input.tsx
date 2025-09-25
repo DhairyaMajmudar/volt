@@ -27,16 +27,22 @@ export const Input = ({
       <input
         id={label}
         name={label}
-        type="text"
+        type={
+          label === 'password'
+            ? 'password'
+            : label === 'email'
+              ? 'email'
+              : 'text'
+        }
         autoComplete={label}
         required
-        value={formData[label]}
+        value={formData[label] || ''}
         onChange={(e) => handleInputChange(label, e.target.value)}
         className={
           `w-full px-3 py-3 border ${
             errors[label] ? 'border-red-300' : 'border-gray-300'
           } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200` +
-          className
+          (className ? ` ${className}` : '')
         }
         placeholder={`Enter your ${label}`}
       />
