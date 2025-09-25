@@ -50,9 +50,9 @@ export const RegisterPage = () => {
         });
       }
     } catch (err) {
+      console.error(err);
       setErrors({
-        general:
-          'Network error. Please check your connection and try again.' + err,
+        general: 'Network error. Please check your connection and try again.',
       });
     } finally {
       setIsLoading(false);
