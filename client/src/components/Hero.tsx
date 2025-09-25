@@ -34,7 +34,7 @@ export const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
             <Link
               to="/register"
-              className="bg-blue-600 text-white px-5 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 font-medium text-base shadow-md hover:shadow-lg transform hover:-translate-y-0.5 group"
+              className="bg-blue-600 text-white px-5 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 font-medium text-base shadow-md"
             >
               Start Free Trial
               <span className="ml-2 group-hover:translate-x-1 transition-transform duration-200">

@@ -24,22 +24,22 @@ export const Navbar = () => {
             </span>
           </Link>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             {isAuthenticated ? (
               <>
-                <span className="text-gray-700 font-medium">
+                <span className="text-gray-600 font-medium">
                   Welcome, {user?.username || 'User'}!
                 </span>
                 <Link
                   to="/dashboard"
-                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium"
+                  className="text-gray-700 hover:text-blue-700 transition-colors duration-200 font-medium px-3 py-2 hover:bg-gray-50 rounded-sm"
                 >
                   Dashboard
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="text-gray-700 hover:text-red-600 transition-colors duration-200 font-medium"
+                  className="text-gray-700 hover:text-red-700 transition-colors duration-200 font-medium px-3 py-2 hover:bg-gray-50 rounded-sm"
                 >
                   Logout
                 </button>
@@ -48,13 +48,13 @@ export const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium"
+                  className="text-gray-700 hover:text-blue-700 transition-colors duration-200  px-4 py-2 hover:bg-gray-100 rounded-sm font-semibold"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all duration-200 font-semibold text-base shadow-md"
                 >
                   Get Started
                 </Link>
