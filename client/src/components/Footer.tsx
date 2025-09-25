@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { GitHub } from './icons/GitHub';
+import { GitHub } from '@/components';
 
 export const Footer = () => {
   return (

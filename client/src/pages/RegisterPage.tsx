@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FormRegister } from '@/components/Forms/FormRegister';
+import { FormRegister } from '@/components';
 import type { FormData, FormErrors } from '@/utils/validateForm';
 import { validateForm } from '@/utils/validateForm';
 

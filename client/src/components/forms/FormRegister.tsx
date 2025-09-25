@@ -1,7 +1,6 @@
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Input } from '@/components/core/Input';
-import { Loader } from '@/components/icons/Loader';
+import { Input, Loader } from '@/components';
 import type { FormData, FormErrors } from '@/utils/validateForm';
 
 interface Props {
