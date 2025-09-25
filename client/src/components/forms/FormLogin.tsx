@@ -1,17 +1,17 @@
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import type { FormData, FormErrors } from '@/components';
+import type { LoginFormData, LoginFormErrors } from '@/components';
 import { Input, Loader } from '@/components';
 
 interface Props {
-  formData: FormData;
-  errors: FormErrors;
+  formData: LoginFormData;
+  errors: LoginFormErrors;
   isLoading: boolean;
   handleSubmit: (e: FormEvent<Element>) => Promise<void>;
-  handleInputChange: (field: keyof FormData, value: string) => void;
+  handleInputChange: (field: keyof LoginFormData, value: string) => void;
 }
 
-export const FormRegister = ({
+export const FormLogin = ({
   formData,
   errors,
   isLoading,
@@ -26,12 +26,13 @@ export const FormRegister = ({
         </div>
       )}
 
-      {['username', 'email', 'password'].map((label) => (
+      {['email', 'password'].map((label) => (
         <Input
-          label={label as keyof FormData}
+          label={label as keyof LoginFormData}
           key={label}
           formData={formData}
           errors={errors}
+          //@ts-expect-error
           handleInputChange={handleInputChange}
         />
       ))}
@@ -42,23 +43,23 @@ export const FormRegister = ({
         className="w-full bg-blue-600 text-white px-5 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 text-base shadow-md font-semibold"
       >
         {isLoading ? (
-          <div className="flex items-center">
+          <div className="flex items-center justify-center">
             <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-            Creating account...
+            Signing in...
           </div>
         ) : (
-          'Create Account'
+          'Sign In'
         )}
       </button>
 
       <div className="text-center">
         <span className="text-sm text-gray-600">
-          Already have an account?
+          Don't have an account?{' '}
           <Link
-            to="/login"
+            to="/register"
             className="font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200"
           >
-            Sign in here
+            Create one here
           </Link>
         </span>
       </div>

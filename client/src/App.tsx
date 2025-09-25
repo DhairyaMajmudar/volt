@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { LandingPage, RegisterPage } from './pages';
+import { LandingPage, LoginPage, RegisterPage } from './pages';
 
 export const App = () => {
   return (
@@ -8,7 +8,7 @@ export const App = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          {/* <Route path="/login" element={<LoginPage />} /> */}
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </div>
     </Router>

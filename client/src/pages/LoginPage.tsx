@@ -1,17 +1,16 @@
 import axios from 'axios';
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { FormData, FormErrors } from '@/components';
-import { FormRegister, Logo } from '@/components';
+import type { LoginFormData, LoginFormErrors } from '@/components';
+import { FormLogin, Logo } from '@/components';
 
-export const RegisterPage = () => {
+export const LoginPage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<FormData>({
-    username: '',
+  const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -22,9 +21,8 @@ export const RegisterPage = () => {
 
     try {
       const { status, data } = await axios.post(
-        '/api/v1/auth/register',
+        '/api/v1/auth/login',
         {
-          username: formData.username,
           email: formData.email,
           password: formData.password,
         },
@@ -35,7 +33,7 @@ export const RegisterPage = () => {
         },
       );
 
-      if (status === 201) {
+      if (status === 200) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/');
@@ -43,20 +41,10 @@ export const RegisterPage = () => {
       // @ts-expect-error
     } catch ({ status, data }) {
       switch (status) {
-        case 409:
-          if (data?.message.includes('email')) {
-            setErrors({
-              email: 'An account with this email already exists.',
-            });
-          } else if (data?.message.includes('username')) {
-            setErrors({
-              username: 'This username is already taken.',
-            });
-          } else {
-            setErrors({
-              general: 'An account with this email or username already exists.',
-            });
-          }
+        case 401:
+          setErrors({
+            general: 'Invalid email or password. Please try again.',
+          });
           break;
         case 400:
           if (data.errors && typeof data.errors === 'object') {
@@ -83,7 +71,7 @@ export const RegisterPage = () => {
     }
   };
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof LoginFormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -118,15 +106,15 @@ export const RegisterPage = () => {
 
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Create your account
+            Welcome back
           </h2>
           <p className="text-gray-600">
-            Join thousands of users managing their files with Volt
+            Sign in to your account to continue managing your files
           </p>
         </div>
 
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200/20 p-8">
-          <FormRegister
+          <FormLogin
             formData={formData}
             errors={errors}
             isLoading={isLoading}

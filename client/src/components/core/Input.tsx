@@ -1,9 +1,9 @@
-import type { FormData, FormErrors } from '@/utils/validateForm';
+import type { FormData, FormErrors, LoginFormData } from '@/components';
 
 interface Props {
   formData: FormData;
   errors: FormErrors;
-  label: keyof FormData;
+  label: keyof FormData | keyof LoginFormData;
   className?: string;
   handleInputChange: (field: keyof FormData, value: string) => void;
 }
