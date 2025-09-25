@@ -28,7 +28,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	var userReq models.UserRequest
 	if err := json.NewDecoder(r.Body).Decode(&userReq); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Invalid request body",
+		})
 		return
 	}
 
@@ -39,29 +42,44 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := user.ValidateUser(); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": err.Error(),
+		})
 		return
 	}
 
 	var existingUser models.User
 	if err := config.DB.Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
-		http.Error(w, "User with this email already exists", http.StatusConflict)
+		w.WriteHeader(http.StatusConflict)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "User with this email already exists",
+		})
 		return
 	}
 
 	if err := config.DB.Where("username = ?", user.Username).First(&existingUser).Error; err == nil {
-		http.Error(w, "User with this username already exists", http.StatusConflict)
+		w.WriteHeader(http.StatusConflict)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "User with this username already exists",
+		})
 		return
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
-		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Failed to create user",
+		})
 		return
 	}
 
 	token, err := utils.GenerateJWT(user.ID, user.Username, user.Email)
 	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Failed to generate token",
+		})
 		return
 	}
 
@@ -79,28 +97,43 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	var loginReq models.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Invalid request body",
+		})
 		return
 	}
 
 	var user models.User
 	if err := config.DB.Where("email = ?", loginReq.Email).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]string{
+				"message": "Invalid credentials",
+			})
 			return
 		}
-		http.Error(w, "Database error", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Database error",
+		})
 		return
 	}
 
 	if err := user.CheckPassword(loginReq.Password); err != nil {
-		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Invalid credentials",
+		})
 		return
 	}
 
 	token, err := utils.GenerateJWT(user.ID, user.Username, user.Email)
 	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Failed to generate token",
+		})
 		return
 	}
 
