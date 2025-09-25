@@ -6,7 +6,7 @@ export interface FormErrors {
 }
 
 export interface FormData {
-  username: string;
+  username?: string;
   email: string;
   password: string;
 }
