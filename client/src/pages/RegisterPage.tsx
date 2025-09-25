@@ -3,7 +3,6 @@ import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormRegister, Logo } from '@/components';
 import type { FormData, FormErrors } from '@/utils/validateForm';
-import { validateForm } from '@/utils/validateForm';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -18,42 +17,67 @@ export const RegisterPage = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const isValid = validateForm(formData, setErrors);
-
-    if (!isValid) {
-      return;
-    }
-
     setIsLoading(true);
     setErrors({});
 
     try {
-      const { data, status } = await axios('/api/v1/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: JSON.stringify({
+      const { status, data } = await axios.post(
+        '/api/v1/auth/register',
+        {
           username: formData.username,
           email: formData.email,
           password: formData.password,
-        }),
-      });
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-      if (status === 200) {
+      if (status === 201) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/dashboard'); // You'll create this later
-      } else {
-        setErrors({
-          general: data.message || 'Registration failed. Please try again.',
-        });
+        navigate('/');
       }
-    } catch (err) {
-      console.error(err);
-      setErrors({
-        general: 'Network error. Please check your connection and try again.',
-      });
+      // @ts-expect-error
+    } catch ({ status, data }) {
+      switch (status) {
+        case 409:
+          if (data?.message.includes('email')) {
+            setErrors({
+              email: 'An account with this email already exists.',
+            });
+          } else if (data?.message.includes('username')) {
+            setErrors({
+              username: 'This username is already taken.',
+            });
+          } else {
+            setErrors({
+              general: 'An account with this email or username already exists.',
+            });
+          }
+          break;
+        case 400:
+          if (data.errors && typeof data.errors === 'object') {
+            setErrors(data.errors);
+          } else {
+            setErrors({
+              general: data.message || 'Please check your input and try again.',
+            });
+          }
+          break;
+        case 500:
+          setErrors({
+            general: 'Server error. Please try again later.',
+          });
+          break;
+        default:
+          setErrors({
+            general:
+              'Network error. Please check your connection and try again.',
+          });
+      }
     } finally {
       setIsLoading(false);
     }

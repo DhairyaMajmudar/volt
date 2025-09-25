@@ -41,7 +41,7 @@ export const Input = ({
         className={
           `w-full px-3 py-3 border ${
             errors[label] ? 'border-red-300' : 'border-gray-300'
-          } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200` +
+          } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none` +
           (className ? ` ${className}` : '')
         }
         placeholder={`Enter your ${label}`}
