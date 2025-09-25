@@ -38,7 +38,7 @@ export const RegisterPage = () => {
       if (status === 201) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/');
+        navigate('/dashboard');
       }
       // @ts-expect-error
     } catch ({ status, data }) {

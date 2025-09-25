@@ -36,7 +36,7 @@ export const LoginPage = () => {
       if (status === 200) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/');
+        navigate('/dashboard');
       }
       // @ts-expect-error
     } catch ({ status, data }) {
