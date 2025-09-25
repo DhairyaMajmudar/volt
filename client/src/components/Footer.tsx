@@ -3,7 +3,7 @@ import { GitHub } from './icons/GitHub';
 
 export const Footer = () => {
   return (
-    <div className="bg-black flex flex-row justify-center px-5 h-8 items-center">
+    <div className="bg-black/85 flex flex-row justify-center px-5 h-8 items-center">
       <span className="text-white left-0">Logo</span>
 
       <p className="text-white text-center flex-grow font-bold tracking-wider">

@@ -1,7 +1,7 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { LandingPage, LoginPage, RegisterPage } from './pages';
 
-export function App() {
+export const App = () => {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
@@ -13,4 +13,4 @@ export function App() {
       </div>
     </Router>
   );
-}
+};
