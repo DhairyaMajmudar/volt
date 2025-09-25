@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "type:check": "tsc --noEmit",
-    "format": "biome format",
+    "format": "biome format --write",
     "lint": "biome check",
     "lint:fix": "biome check --write"
   },
