@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
+import { Logo } from '@/components';
 
 export const Navbar = () => {
   const isAuthenticated = !!localStorage.getItem('token');
   const user = localStorage.getItem('user')
-    ? JSON.parse(localStorage.getItem('user')!)
+    ? JSON.parse(localStorage.getItem('user') as string)
     : null;
 
   const handleLogout = () => {
@@ -16,10 +17,12 @@ export const Navbar = () => {
     <nav className="border-b border-gray-200 sticky top-0 z-50 backdrop-blur-lg bg-white/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            {/* add logo here */}
-            Volt
-          </div>
+          <Link to={'/'}>
+            <span className="flex items-center text-lg font-semibold gap-2">
+              <Logo />
+              Volt
+            </span>
+          </Link>
 
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
@@ -34,6 +37,7 @@ export const Navbar = () => {
                   Dashboard
                 </Link>
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="text-gray-700 hover:text-red-600 transition-colors duration-200 font-medium"
                 >

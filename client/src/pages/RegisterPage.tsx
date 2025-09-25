@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FormRegister } from '@/components';
+import { FormRegister, Logo } from '@/components';
 import type { FormData, FormErrors } from '@/utils/validateForm';
 import { validateForm } from '@/utils/validateForm';
 
@@ -83,12 +83,12 @@ export const RegisterPage = () => {
 
       <div className="relative max-w-md w-full space-y-8">
         <Link
-          to="/"
-          className="flex items-center justify-center space-x-2 mb-8"
+          to={'/'}
+          className="flex items-center flex-row justify-center space-x-2 mb-8"
         >
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xl">V</span>
-          </div>
+          <span className="text-gray-900 text-2xl font-bold">
+            <Logo />
+          </span>
           <span className="text-2xl font-bold text-gray-900">Volt</span>
         </Link>
 

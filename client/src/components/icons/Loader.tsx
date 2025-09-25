@@ -10,6 +10,7 @@ export const Loader: FC<IconProps> = ({ className }) => (
     aria-label="Loader"
     viewBox="0 0 24 24"
   >
+    <title>Loader</title>
     <circle
       className="opacity-25"
       cx="12"

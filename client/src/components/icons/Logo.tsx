@@ -5,40 +5,26 @@ export interface IconProps extends SVGProps<SVGSVGElement> {}
 export const Logo: FC<IconProps> = ({ className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className={`size-6 ${className}`}
-    viewBox="0 0 64 64"
-    width="64"
-    height="64"
-    role="img"
-    aria-label="Lightning bolt icon"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    className={`lucide lucide-vault-icon lucide-vault size-6 ${className}`}
   >
-    <title>Lightning bolt</title>
-    <defs>
-      <linearGradient id="grad-yellow-orange" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#FFD400" />
-        <stop offset="100%" stop-color="#FF6A00" />
-      </linearGradient>
-
-      <filter id="ds" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.25" />
-      </filter>
-    </defs>
-
-    <g filter="url(#ds)">
-      <path
-        fill="url(#grad-yellow-orange)"
-        stroke="#E35A00"
-        stroke-opacity="0.15"
-        stroke-width="1"
-        d="M34.5 2.0
-             L14.5 36.0
-             H28.0
-             L22.5 62.0
-             L49.5 24.0
-             H36.0
-             L42.5 2.0
-             Z"
-      />
-    </g>
+    <title>Volt Logo</title>
+    <rect width="18" height="18" x="3" y="3" rx="2" />
+    <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
+    <path d="m7.9 7.9 2.7 2.7" />
+    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />
+    <path d="m13.4 10.6 2.7-2.7" />
+    <circle cx="7.5" cy="16.5" r=".5" fill="currentColor" />
+    <path d="m7.9 16.1 2.7-2.7" />
+    <circle cx="16.5" cy="16.5" r=".5" fill="currentColor" />
+    <path d="m13.4 13.4 2.7 2.7" />
+    <circle cx="12" cy="12" r="2" />
   </svg>
 );

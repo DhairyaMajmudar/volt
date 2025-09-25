@@ -41,7 +41,10 @@ export const Hero = () => {
                 →
               </span>
             </Link>
-            <button className="bg-white text-gray-700 px-5 py-2.5 rounded-md border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 font-medium text-base shadow-sm hover:shadow-md">
+            <button
+              type="button"
+              className="bg-white text-gray-700 px-5 py-2.5 rounded-md border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 font-medium text-base shadow-sm hover:shadow-md"
+            >
               Watch Demo
             </button>
           </div>
