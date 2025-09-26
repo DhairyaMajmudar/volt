@@ -5,7 +5,6 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-  console.log(location);
 
   const isAuthenticated = !!localStorage.getItem('token');
   const user = localStorage.getItem('user')
@@ -43,6 +42,17 @@ export const Navbar = () => {
                     }`}
                   >
                     Dashboard
+                  </button>
+                </Link>
+
+                <Link to="/profile">
+                  <button
+                    type="button"
+                    className={`text-gray-700 hover:text-blue-700 transition-colors duration-200 font-medium px-3 py-2 hover:bg-gray-50 rounded-sm cursor-pointer ${
+                      location.pathname === '/profile' ? 'hidden' : ''
+                    }`}
+                  >
+                    Profile
                   </button>
                 </Link>
 
