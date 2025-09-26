@@ -166,23 +166,3 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(user.ToResponse())
 }
-
-func RefreshToken(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	claims := middlewares.GetUserFromContext(r)
-	if claims == nil {
-		http.Error(w, "User not found in context", http.StatusUnauthorized)
-		return
-	}
-
-	token, err := utils.GenerateJWT(claims.UserID, claims.Username, claims.Email)
-	if err != nil {
-		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
-		return
-	}
-
-	json.NewEncoder(w).Encode(map[string]string{
-		"token": "Bearer " + token,
-	})
-}

@@ -18,8 +18,7 @@ func SetupRoutes(router *mux.Router) {
 
 	// File upload and management routes
 	protected.HandleFunc("/files/upload", controllers.UploadFile).Methods("POST")
-	protected.HandleFunc("/files", controllers.GetFiles).Methods("GET")
-	protected.HandleFunc("/files/{ID}", controllers.GetFileByID).Methods("GET")
+	protected.HandleFunc("/files/{ID}", controllers.GetFiles).Methods("GET")
 	protected.HandleFunc("/files/{ID}", controllers.DeleteFile).Methods("DELETE")
 	protected.HandleFunc("/users/storage-stats", controllers.GetUserStorageStats).Methods("GET")
 }

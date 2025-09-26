@@ -62,23 +62,12 @@ export const ProfilePage = () => {
   const fetchStorageStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
 
-      if (!userData) {
-        navigate('/login');
-        return;
-      }
-
-      const user = JSON.parse(userData);
-
-      const { status, data } = await axios.get(
-        `/api/v1/users/storage-stats?user_id=${user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const { status, data } = await axios.get(`/api/v1/users/storage-stats`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       if (status === 200) setStorageStats(data);
 
