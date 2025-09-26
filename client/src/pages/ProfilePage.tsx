@@ -1,11 +1,11 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import type { FormErrors, StorageStatsData } from "@/components";
-import { Navbar } from "@/components";
-import { formatDate } from "@/utils/formatDate";
-import { formatFileSize } from "@/utils/formatFileSize";
-import { handleErrors } from "@/utils/handleError";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { FormErrors, StorageStatsData } from '@/components';
+import { Navbar } from '@/components';
+import { formatDate } from '@/utils/formatDate';
+import { formatFileSize } from '@/utils/formatFileSize';
+import { handleErrors } from '@/utils/handleError';
 
 interface UserProfile {
   id: number;
@@ -18,16 +18,16 @@ export const ProfilePage = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [storageStats, setStorageStats] = useState<StorageStatsData | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
     if (!token) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
@@ -37,16 +37,16 @@ export const ProfilePage = () => {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (!token) {
-        navigate("/login");
+        navigate('/login');
         return;
       }
 
-      const { status, data } = await axios.get("/api/v1/auth/profile", {
+      const { status, data } = await axios.get('/api/v1/auth/profile', {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
@@ -61,7 +61,7 @@ export const ProfilePage = () => {
 
   const fetchStorageStats = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
 
       const { status, data } = await axios.get(`/api/v1/users/storage-stats`, {
         headers: {
