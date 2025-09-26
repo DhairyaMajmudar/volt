@@ -1,5 +1,5 @@
-import { formatFileSize } from '@/utils/formatFileSize';
 import type { StorageStatsData } from '@/components';
+import { formatFileSize } from '@/utils/formatFileSize';
 
 interface Props {
   stats: StorageStatsData;

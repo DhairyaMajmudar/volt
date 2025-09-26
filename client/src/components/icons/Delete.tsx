@@ -10,6 +10,7 @@ export const Delete: FC<IconProps> = ({ className }) => (
     viewBox="0 0 24 24"
     aria-label="Delete"
   >
+    <title>Delete Icon</title>
     <path
       strokeLinecap="round"
       strokeLinejoin="round"

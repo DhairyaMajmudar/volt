@@ -10,6 +10,7 @@ export const Upload = ({ className }: IconProps) => {
       xmlns="http://www.w3.org/2000/svg"
       aria-label="Upload"
     >
+      <title>Upload Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

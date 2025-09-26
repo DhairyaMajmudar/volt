@@ -7,9 +7,9 @@ import Uploady, {
   useItemProgressListener,
   useItemStartListener,
 } from '@rpldy/uploady';
-import { use, useState } from 'react';
+import { useState } from 'react';
 import type { FileData, FormErrors, StorageStatsData } from '@/components';
-import { Loader, Upload } from '@/components';
+import { Upload } from '@/components';
 import { handleErrors } from '@/utils/handleError';
 
 interface Props {

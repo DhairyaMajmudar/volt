@@ -1,5 +1,5 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Logo } from "@/components";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Logo } from '@/components';
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -7,21 +7,21 @@ export const Navbar = () => {
   const location = useLocation();
   console.log(location);
 
-  const isAuthenticated = !!localStorage.getItem("token");
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") as string)
+  const isAuthenticated = !!localStorage.getItem('token');
+  const user = localStorage.getItem('user')
+    ? JSON.parse(localStorage.getItem('user') as string)
     : null;
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/');
   };
   return (
     <nav className="border-b border-gray-200 sticky top-0 z-50 backdrop-blur-lg bg-white/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link to={"/"}>
+          <Link to={'/'}>
             <span className="flex items-center text-lg font-semibold gap-2">
               <Logo />
               Volt
@@ -32,14 +32,14 @@ export const Navbar = () => {
             {isAuthenticated ? (
               <>
                 <span className="text-gray-600 font-semibold">
-                  Welcome, {user?.username || "User"}!
+                  Welcome, {user?.username || 'User'}!
                 </span>
 
                 <Link to="/dashboard">
                   <button
                     type="button"
                     className={`text-gray-700 hover:text-blue-700 transition-colors duration-200 font-medium px-3 py-2 hover:bg-gray-50 rounded-sm cursor-pointer ${
-                      location.pathname === "/dashboard" ? "hidden" : ""
+                      location.pathname === '/dashboard' ? 'hidden' : ''
                     }`}
                   >
                     Dashboard
