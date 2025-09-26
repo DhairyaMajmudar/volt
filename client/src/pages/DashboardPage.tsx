@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { FormErrors } from '@/components';
+import type { FormErrors, FileData, StorageStatsData } from '@/components';
 import {
   FileList,
   FileUpload,
@@ -15,35 +15,6 @@ interface User {
   id: number;
   username: string;
   email: string;
-}
-
-interface FileData {
-  id: number;
-  user_id: number;
-  file_id: number;
-  display_name: string;
-  is_duplicate: boolean;
-  is_private: boolean;
-  created_at: string;
-  updated_at: string;
-  file: {
-    id: number;
-    hash: string;
-    original_name: string;
-    mime_type: string;
-    size: number;
-    storage_path: string;
-    reference_count: number;
-    created_at: string;
-  };
-}
-
-interface StorageStatsData {
-  user_id: number;
-  total_files: number;
-  total_size: number;
-  total_duplicates: number;
-  storage_by_file_type: Record<string, number>;
 }
 
 export const DashboardPage = () => {
@@ -84,14 +55,17 @@ export const DashboardPage = () => {
         return;
       }
 
-      const { status, data } = await axios.get('/api/v1/files', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const { status, data } = await axios.get(
+        `/api/v1/files?user_id=${user?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
-      if (status === 2000) setFiles(data || []);
+      if (status === 200) setFiles(data || []);
       // @ts-expect-error
     } catch ({ status, data }) {
       handleErrors(status, setErrors, data);
