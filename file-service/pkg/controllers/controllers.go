@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"volt/file-service/pkg/middlewares"
 	"volt/file-service/pkg/utils"
 
 	"volt/db/config"
@@ -28,17 +29,22 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(MaxFileSize)
 	if err != nil {
-		http.Error(w, "Failed to parse form: "+err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Failed to parse form: " + err.Error(),
+		})
 		return
 	}
 
-	userIDStr := r.FormValue("user_id")
-	userID := uint(1)
-	if userIDStr != "" {
-		if parsedID, err := strconv.ParseUint(userIDStr, 10, 32); err == nil {
-			userID = uint(parsedID)
-		}
+	userClaims, ok := r.Context().Value(middlewares.UserContextKey).(*utils.Claims)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "User information not found",
+		})
+		return
 	}
+	userID := userClaims.UserID
 
 	isPrivate := true
 	if privacyStr := r.FormValue("is_private"); privacyStr == "false" {
@@ -47,14 +53,20 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	file, header, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, "Failed to get file: "+err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Failed to get file: " + err.Error(),
+		})
 		return
 	}
 	defer file.Close()
 
 	result, err := utils.ProcessFileUpload(file, header, userID, isPrivate)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": err.Error(),
+		})
 		return
 	}
 
@@ -71,57 +83,75 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 		StorageStats: *stats,
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
 }
 
 func GetFiles(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	userIDStr := r.URL.Query().Get("user_id")
-	userID := uint(1)
-	if userIDStr != "" {
-		if parsedID, err := strconv.ParseUint(userIDStr, 10, 32); err == nil {
-			userID = uint(parsedID)
-		}
+	userClaims, ok := r.Context().Value(middlewares.UserContextKey).(*utils.Claims)
+	if !ok {
+		log.Printf("GetFiles: User information not found in context")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "User information not found",
+		})
+		return
 	}
+	userID := userClaims.UserID
+	log.Printf("GetFiles: Fetching files for user ID: %d", userID)
 
 	var fileRefs []models.FileReference
 	result := config.DB.Where("user_id = ?", userID).
-		Preload("File").
+		Preload("File", "deleted_at IS NULL").
 		Preload("User").
 		Order("created_at DESC").
 		Find(&fileRefs)
 
 	if result.Error != nil {
-		http.Error(w, "Failed to get files: "+result.Error.Error(), http.StatusInternalServerError)
+		log.Printf("GetFiles: Database error: %v", result.Error)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Failed to get files: " + result.Error.Error(),
+		})
 		return
 	}
 
-	var files []map[string]interface{}
+	log.Printf("GetFiles: Found %d file references", len(fileRefs))
+
+	var files []models.FileResponse
 	for _, ref := range fileRefs {
-		fileData := map[string]interface{}{
-			"id":           ref.ID,
-			"user_id":      ref.UserID,
-			"file_id":      ref.FileID,
-			"display_name": ref.DisplayName,
-			"is_duplicate": ref.IsDuplicate,
-			"is_private":   ref.IsPrivate,
-			"created_at":   ref.CreatedAt,
-			"updated_at":   ref.UpdatedAt,
-			"file": map[string]interface{}{
-				"id":              ref.File.ID,
-				"hash":            ref.File.Hash,
-				"original_name":   ref.File.OriginalName,
-				"mime_type":       ref.File.MimeType,
-				"size":            ref.File.Size,
-				"storage_path":    ref.File.StoragePath,
-				"reference_count": ref.File.ReferenceCount,
-				"created_at":      ref.File.CreatedAt,
+		if ref.File.ID == 0 {
+			log.Printf("GetFiles: Skipping file reference %d due to deleted file", ref.ID)
+			continue
+		}
+
+		fileData := models.FileResponse{
+			ID:          ref.ID,
+			UserID:      ref.UserID,
+			FileID:      ref.FileID,
+			DisplayName: ref.DisplayName,
+			IsDuplicate: ref.IsDuplicate,
+			IsPrivate:   ref.IsPrivate,
+			CreatedAt:   ref.CreatedAt,
+			UpdatedAt:   ref.UpdatedAt,
+			File: models.File{
+				ID:             ref.File.ID,
+				Hash:           ref.File.Hash,
+				OriginalName:   ref.File.OriginalName,
+				MimeType:       ref.File.MimeType,
+				Size:           ref.File.Size,
+				StoragePath:    ref.File.StoragePath,
+				ReferenceCount: ref.File.ReferenceCount,
+				CreatedAt:      ref.File.CreatedAt,
 			},
 		}
 		files = append(files, fileData)
 	}
 
+	log.Printf("GetFiles: Returning %d files to user %d", len(files), userID)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(files)
 }
 
@@ -131,54 +161,74 @@ func GetFileByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fileRefID, err := strconv.ParseUint(vars["ID"], 10, 32)
 	if err != nil {
-		http.Error(w, "Invalid file reference ID", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Invalid file reference ID",
+		})
 		return
 	}
 
-	userIDStr := r.URL.Query().Get("user_id")
-	userID := uint(1)
-	if userIDStr != "" {
-		if parsedID, err := strconv.ParseUint(userIDStr, 10, 32); err == nil {
-			userID = uint(parsedID)
-		}
+	userClaims, ok := r.Context().Value(middlewares.UserContextKey).(*utils.Claims)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "User information not found",
+		})
+		return
 	}
+	userID := userClaims.UserID
 
 	var fileRef models.FileReference
 	result := config.DB.Where("id = ? AND user_id = ?", uint(fileRefID), userID).
-		Preload("File").
+		Preload("File", "deleted_at IS NULL").
 		Preload("User").
 		First(&fileRef)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
-			http.Error(w, "File not found", http.StatusNotFound)
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(map[string]string{
+				"error": "File not found",
+			})
 			return
 		}
-		http.Error(w, "Database error: "+result.Error.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Database error: " + result.Error.Error(),
+		})
 		return
 	}
 
-	fileData := map[string]interface{}{
-		"id":           fileRef.ID,
-		"user_id":      fileRef.UserID,
-		"file_id":      fileRef.FileID,
-		"display_name": fileRef.DisplayName,
-		"is_duplicate": fileRef.IsDuplicate,
-		"is_private":   fileRef.IsPrivate,
-		"created_at":   fileRef.CreatedAt,
-		"updated_at":   fileRef.UpdatedAt,
-		"file": map[string]interface{}{
-			"id":              fileRef.File.ID,
-			"hash":            fileRef.File.Hash,
-			"original_name":   fileRef.File.OriginalName,
-			"mime_type":       fileRef.File.MimeType,
-			"size":            fileRef.File.Size,
-			"storage_path":    fileRef.File.StoragePath,
-			"reference_count": fileRef.File.ReferenceCount,
-			"created_at":      fileRef.File.CreatedAt,
+	if fileRef.File.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "File not found",
+		})
+		return
+	}
+
+	fileData := models.FileResponse{
+		ID:          fileRef.ID,
+		UserID:      fileRef.UserID,
+		FileID:      fileRef.FileID,
+		DisplayName: fileRef.DisplayName,
+		IsDuplicate: fileRef.IsDuplicate,
+		IsPrivate:   fileRef.IsPrivate,
+		CreatedAt:   fileRef.CreatedAt,
+		UpdatedAt:   fileRef.UpdatedAt,
+		File: models.File{
+			ID:             fileRef.File.ID,
+			Hash:           fileRef.File.Hash,
+			OriginalName:   fileRef.File.OriginalName,
+			MimeType:       fileRef.File.MimeType,
+			Size:           fileRef.File.Size,
+			StoragePath:    fileRef.File.StoragePath,
+			ReferenceCount: fileRef.File.ReferenceCount,
+			CreatedAt:      fileRef.File.CreatedAt,
 		},
 	}
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(fileData)
 }
 
@@ -188,37 +238,50 @@ func DeleteFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fileRefID, err := strconv.ParseUint(vars["ID"], 10, 32)
 	if err != nil {
-		http.Error(w, "Invalid file reference ID", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Invalid file reference ID",
+		})
 		return
 	}
 
-	userIDStr := r.URL.Query().Get("user_id")
-	userID := uint(1)
-	if userIDStr != "" {
-		if parsedID, err := strconv.ParseUint(userIDStr, 10, 32); err == nil {
-			userID = uint(parsedID)
-		}
+	userClaims, ok := r.Context().Value(middlewares.UserContextKey).(*utils.Claims)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "User information not found",
+		})
+		return
 	}
+	userID := userClaims.UserID
 
-	// First check if the file reference exists and belongs to the user
 	var fileRef models.FileReference
 	result := config.DB.Where("id = ? AND user_id = ?", uint(fileRefID), userID).First(&fileRef)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
-			http.Error(w, "File not found", http.StatusNotFound)
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(map[string]string{
+				"error": "File not found",
+			})
 			return
 		}
-		http.Error(w, "Database error: "+result.Error.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Database error: " + result.Error.Error(),
+		})
 		return
 	}
 
-	// Delete the file reference (soft delete with GORM)
 	if err := config.DB.Delete(&fileRef).Error; err != nil {
-		http.Error(w, "Failed to delete file: "+err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Failed to delete file: " + err.Error(),
+		})
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"success": true,
 		"message": "File deleted successfully",
@@ -278,23 +341,28 @@ func GetUserStorageStatsData(userID uint) (*models.UserStorageStats, error) {
 	return &stats, nil
 }
 
-// GetUserStorageStats HTTP handler for getting user storage statistics
 func GetUserStorageStats(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	userIDStr := r.URL.Query().Get("user_id")
-	userID := 1
-	if userIDStr != "" {
-		if parsedID, err := strconv.Atoi(userIDStr); err == nil {
-			userID = parsedID
-		}
+	userClaims, ok := r.Context().Value(middlewares.UserContextKey).(*utils.Claims)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "User information not found",
+		})
+		return
 	}
+	userID := int(userClaims.UserID)
 
 	stats, err := utils.GetUserStorageStats(userID)
 	if err != nil {
-		http.Error(w, "Failed to get storage stats: "+err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Failed to get storage stats: " + err.Error(),
+		})
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(stats)
 }

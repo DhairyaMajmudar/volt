@@ -127,3 +127,15 @@ type FileUploadResult struct {
 	WasDuplicate  bool          `json:"was_duplicate"`
 	SavedBytes    int64         `json:"saved_bytes"`
 }
+
+type FileResponse struct {
+	ID          uint      `json:"id"`
+	UserID      uint      `json:"user_id"`
+	FileID      uint      `json:"file_id"`
+	DisplayName string    `json:"display_name"`
+	IsDuplicate bool      `json:"is_duplicate"`
+	IsPrivate   bool      `json:"is_private"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	File        File      `json:"file"`
+}
