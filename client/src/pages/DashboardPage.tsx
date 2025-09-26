@@ -1,15 +1,15 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import type { FileData, FormErrors, StorageStatsData } from "@/components";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { FileData, FormErrors, StorageStatsData } from '@/components';
 import {
   FileList,
   FileUpload,
   Footer,
   Navbar,
   StorageStats,
-} from "@/components";
-import { handleErrors } from "@/utils/handleError";
+} from '@/components';
+import { handleErrors } from '@/utils/handleError';
 
 interface User {
   id: number;
@@ -21,25 +21,16 @@ export const DashboardPage = () => {
   const navigate = useNavigate();
   const [files, setFiles] = useState<FileData[]>([]);
   const [storageStats, setStorageStats] = useState<StorageStatsData | null>(
-    null
+    null,
   );
-  const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("user");
+    const token = localStorage.getItem('token');
 
-    if (!token || !userData) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      setUser(JSON.parse(userData));
-    } catch {
-      navigate("/login");
+    if (!token) {
+      navigate('/login');
       return;
     }
 
@@ -49,20 +40,20 @@ export const DashboardPage = () => {
 
   const fetchFiles = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const userData = localStorage.getItem("user");
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
 
       if (!token || !userData) {
-        navigate("/login");
+        navigate('/login');
         return;
       }
 
-      const userId = JSON.parse(userData)?.id;
+      const userId: User['id'] = JSON.parse(userData).id;
 
       const { status, data } = await axios.get(`/api/v1/files/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
@@ -80,7 +71,7 @@ export const DashboardPage = () => {
 
   const fetchStorageStats = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
 
       const { status, data } = await axios.get(`/api/v1/users/storage-stats`, {
         headers: {
@@ -98,7 +89,7 @@ export const DashboardPage = () => {
 
   const handleFileUpload = (
     uploadedFiles: FileData[],
-    newStats: StorageStatsData
+    newStats: StorageStatsData,
   ) => {
     setFiles((prevFiles) => [...uploadedFiles, ...prevFiles]);
     setStorageStats(newStats);
@@ -106,7 +97,7 @@ export const DashboardPage = () => {
 
   const handleFileDelete = async (fileId: number) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
 
       await axios.delete(`/api/v1/files/${fileId}`, {
         headers: {
