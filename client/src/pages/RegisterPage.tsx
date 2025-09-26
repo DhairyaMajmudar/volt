@@ -3,6 +3,7 @@ import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { FormData, FormErrors } from '@/components';
 import { FormRegister, Logo } from '@/components';
+import { handleErrors } from '@/utils/handleError';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -42,42 +43,7 @@ export const RegisterPage = () => {
       }
       // @ts-expect-error
     } catch ({ status, data }) {
-      switch (status) {
-        case 409:
-          if (data?.message.includes('email')) {
-            setErrors({
-              email: 'An account with this email already exists.',
-            });
-          } else if (data?.message.includes('username')) {
-            setErrors({
-              username: 'This username is already taken.',
-            });
-          } else {
-            setErrors({
-              general: 'An account with this email or username already exists.',
-            });
-          }
-          break;
-        case 400:
-          if (data.errors && typeof data.errors === 'object') {
-            setErrors(data.errors);
-          } else {
-            setErrors({
-              general: data.message || 'Please check your input and try again.',
-            });
-          }
-          break;
-        case 500:
-          setErrors({
-            general: 'Server error. Please try again later.',
-          });
-          break;
-        default:
-          setErrors({
-            general:
-              'Network error. Please check your connection and try again.',
-          });
-      }
+      handleErrors(status, setErrors, data);
     } finally {
       setIsLoading(false);
     }

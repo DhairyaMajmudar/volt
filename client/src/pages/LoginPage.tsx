@@ -3,6 +3,7 @@ import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { LoginFormData, LoginFormErrors } from '@/components';
 import { FormLogin, Logo } from '@/components';
+import { handleErrors } from '@/utils/handleError';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -40,32 +41,7 @@ export const LoginPage = () => {
       }
       // @ts-expect-error
     } catch ({ status, data }) {
-      switch (status) {
-        case 401:
-          setErrors({
-            general: 'Invalid email or password. Please try again.',
-          });
-          break;
-        case 400:
-          if (data.errors && typeof data.errors === 'object') {
-            setErrors(data.errors);
-          } else {
-            setErrors({
-              general: data.message || 'Please check your input and try again.',
-            });
-          }
-          break;
-        case 500:
-          setErrors({
-            general: 'Server error. Please try again later.',
-          });
-          break;
-        default:
-          setErrors({
-            general:
-              'Network error. Please check your connection and try again.',
-          });
-      }
+      handleErrors(status, setErrors, data);
     } finally {
       setIsLoading(false);
     }
