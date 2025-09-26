@@ -102,16 +102,8 @@ func (fr *FileReference) AfterDelete(tx *gorm.DB) error {
 type UserStorageStats struct {
 	UserID             int     `json:"user_id"`
 	TotalFiles         int     `json:"total_files"`
-	UniqueFiles        int     `json:"unique_files"`
 	DuplicateFiles     int     `json:"duplicate_files"`
-	TotalSizeBytes     int64   `json:"total_size_bytes"`
-	ActualStorageBytes int64   `json:"actual_storage_bytes"`
-	SavedBytes         int64   `json:"saved_bytes"`
-	SavingsPercentage  float64 `json:"savings_percentage"`
-
 	TotalStorageUsed  int64            `json:"total_storage_used"`
-	TotalDuplicates   int              `json:"total_duplicates"`
-	StorageByFileType map[string]int64 `json:"storage_by_file_type"`
 }
 
 type UploadResponse struct {

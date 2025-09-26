@@ -71,6 +71,8 @@ export const ProfilePage = () => {
 
       if (status === 200) setStorageStats(data);
 
+      console.log(storageStats);
+
       // @ts-expect-error
     } catch ({ status, data }) {
       handleErrors(status, setErrors, data);
@@ -177,7 +179,7 @@ export const ProfilePage = () => {
                             Storage Used
                           </span>
                           <span className="text-lg font-bold text-green-600">
-                            {formatFileSize(storageStats.total_size)}
+                            {storageStats.total_size}
                           </span>
                         </div>
                       </div>

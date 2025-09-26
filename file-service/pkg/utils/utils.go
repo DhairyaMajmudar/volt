@@ -198,82 +198,33 @@ func calculateFileHash(file multipart.File) (*FileHashResult, error) {
 	}, nil
 }
 
-func GetUserStorageStats(userID int) (*models.UserStorageStats, error) {
-	db := config.GetDB()
-	if db == nil {
-		return nil, fmt.Errorf("database connection not initialized")
-	}
-
+func GetUserStorageStatsData(userID uint) (*models.UserStorageStats, error) {
 	var stats models.UserStorageStats
-	stats.UserID = userID
+	stats.UserID = int(userID)
 
 	var totalFiles int64
-	if err := db.Model(&models.FileReference{}).Where("user_id = ?", userID).Count(&totalFiles).Error; err != nil {
-		return nil, fmt.Errorf("failed to count total files: %w", err)
+	if err := config.DB.Model(&models.FileReference{}).Where("user_id = ?", userID).Count(&totalFiles).Error; err != nil {
+		return &stats, err
 	}
 	stats.TotalFiles = int(totalFiles)
 
-	var uniqueFiles int64
-	if err := db.Model(&models.FileReference{}).Where("user_id = ?", userID).Select("DISTINCT file_id").Count(&uniqueFiles).Error; err != nil {
-		return nil, fmt.Errorf("failed to count unique files: %w", err)
-	}
-	stats.UniqueFiles = int(uniqueFiles)
-
-	stats.DuplicateFiles = stats.TotalFiles - stats.UniqueFiles
-
 	var totalSize int64
-	result := db.Table("file_references").
+	result := config.DB.Table("file_references").
 		Select("COALESCE(SUM(files.size), 0)").
 		Joins("JOIN files ON file_references.file_id = files.id").
 		Where("file_references.user_id = ?", userID).
 		Scan(&totalSize)
 
 	if result.Error != nil {
-		return nil, fmt.Errorf("failed to calculate total size: %w", result.Error)
+		return &stats, result.Error
 	}
-	stats.TotalSizeBytes = totalSize
-
-	var actualSize int64
-	result = db.Table("file_references").
-		Select("COALESCE(SUM(DISTINCT files.size), 0)").
-		Joins("JOIN files ON file_references.file_id = files.id").
-		Where("file_references.user_id = ?", userID).
-		Scan(&actualSize)
-
-	if result.Error != nil {
-		return nil, fmt.Errorf("failed to calculate actual size: %w", result.Error)
-	}
-	stats.ActualStorageBytes = actualSize
-
-	stats.SavedBytes = stats.TotalSizeBytes - stats.ActualStorageBytes
-	if stats.TotalSizeBytes > 0 {
-		stats.SavingsPercentage = float64(stats.SavedBytes) / float64(stats.TotalSizeBytes) * 100
-	} else {
-		stats.SavingsPercentage = 0
-	}
-
 	stats.TotalStorageUsed = totalSize
-	stats.TotalDuplicates = stats.DuplicateFiles
 
-	stats.StorageByFileType = make(map[string]int64)
-
-	var fileTypes []struct {
-		MimeType string `json:"mime_type"`
-		Size     int64  `json:"size"`
+	var duplicates int64
+	if err := config.DB.Model(&models.FileReference{}).Where("user_id = ? AND is_duplicate = ?", userID, true).Count(&duplicates).Error; err != nil {
+		return &stats, err
 	}
-
-	result = db.Table("file_references").
-		Select("files.mime_type, SUM(files.size) as size").
-		Joins("JOIN files ON file_references.file_id = files.id").
-		Where("file_references.user_id = ?", userID).
-		Group("files.mime_type").
-		Scan(&fileTypes)
-
-	if result.Error == nil {
-		for _, ft := range fileTypes {
-			stats.StorageByFileType[ft.MimeType] = ft.Size
-		}
-	}
+	stats.DuplicateFiles = int(duplicates)
 
 	return &stats, nil
 }

@@ -70,7 +70,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stats, err := GetUserStorageStatsData(userID)
+	stats, err := utils.GetUserStorageStatsData(userID)
 	if err != nil {
 		log.Printf("Failed to get user stats: %v", err)
 		stats = &models.UserStorageStats{UserID: int(userID)}
@@ -197,59 +197,6 @@ func DeleteFile(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func GetUserStorageStatsData(userID uint) (*models.UserStorageStats, error) {
-	var stats models.UserStorageStats
-	stats.UserID = int(userID)
-
-	var totalFiles int64
-	if err := config.DB.Model(&models.FileReference{}).Where("user_id = ?", userID).Count(&totalFiles).Error; err != nil {
-		return &stats, err
-	}
-	stats.TotalFiles = int(totalFiles)
-
-	var totalSize int64
-	result := config.DB.Table("file_references").
-		Select("COALESCE(SUM(files.size), 0)").
-		Joins("JOIN files ON file_references.file_id = files.id").
-		Where("file_references.user_id = ?", userID).
-		Scan(&totalSize)
-
-	if result.Error != nil {
-		return &stats, result.Error
-	}
-	stats.TotalStorageUsed = totalSize
-
-	var duplicates int64
-	if err := config.DB.Model(&models.FileReference{}).Where("user_id = ? AND is_duplicate = ?", userID, true).Count(&duplicates).Error; err != nil {
-		return &stats, err
-	}
-	stats.TotalDuplicates = int(duplicates)
-
-	var fileTypes []struct {
-		MimeType string `json:"mime_type"`
-		Count    int64  `json:"count"`
-		Size     int64  `json:"size"`
-	}
-
-	result = config.DB.Table("file_references").
-		Select("files.mime_type, COUNT(*) as count, SUM(files.size) as size").
-		Joins("JOIN files ON file_references.file_id = files.id").
-		Where("file_references.user_id = ?", userID).
-		Group("files.mime_type").
-		Scan(&fileTypes)
-
-	if result.Error != nil {
-		log.Printf("Warning: Failed to get file type stats: %v", result.Error)
-	}
-
-	stats.StorageByFileType = make(map[string]int64)
-	for _, ft := range fileTypes {
-		stats.StorageByFileType[ft.MimeType] = ft.Size
-	}
-
-	return &stats, nil
-}
-
 func GetUserStorageStats(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -261,10 +208,11 @@ func GetUserStorageStats(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	userID := int(userClaims.UserID)
+	userID := userClaims.UserID
 
-	stats, err := utils.GetUserStorageStats(userID)
+	stats, err := utils.GetUserStorageStatsData(userID)
 	if err != nil {
+		log.Printf("GetUserStorageStats: Failed to get stats for user %d: %v", userID, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{
 			"error": "Failed to get storage stats: " + err.Error(),
