@@ -31,13 +31,13 @@ spec:
               mountPath: /root/uploads
           livenessProbe:
             httpGet:
-              path: /api/v1/health
+              path: /api/v1/file-service/health
               port: 8081
             initialDelaySeconds: 30
             periodSeconds: 30
           readinessProbe:
             httpGet:
-              path: /api/v1/health
+              path: /api/v1/file-service/health
               port: 8081
             initialDelaySeconds: 5
             periodSeconds: 10

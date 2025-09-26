@@ -11,7 +11,7 @@ func SetupRoutes(router *mux.Router) {
 	api := router.PathPrefix("/api/v1").Subrouter()
 
 	// Health check endpoint
-	api.HandleFunc("/health", controllers.HealthCheck).Methods("GET")
+	api.HandleFunc("/file-service/health", controllers.HealthCheck).Methods("GET")
 
 	protected := api.PathPrefix("").Subrouter()
 	protected.Use(middlewares.AuthMiddleware)
