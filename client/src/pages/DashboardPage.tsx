@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { FormErrors } from '@/components';
 import {
   FileList,
   FileUpload,
@@ -8,6 +9,7 @@ import {
   Navbar,
   StorageStats,
 } from '@/components';
+import { handleErrors } from '@/utils/handleError';
 
 interface User {
   id: number;
@@ -50,8 +52,9 @@ export const DashboardPage = () => {
   const [storageStats, setStorageStats] = useState<StorageStatsData | null>(
     null,
   );
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -81,21 +84,17 @@ export const DashboardPage = () => {
         return;
       }
 
-      const response = await axios.get('/api/v1/files', {
+      const { status, data } = await axios.get('/api/v1/files', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
 
-      setFiles(response.data || []);
-    } catch (error) {
-      console.error('Failed to fetch files:', error);
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        navigate('/login');
-      }
+      if (status === 2000) setFiles(data || []);
+      // @ts-expect-error
+    } catch ({ status, data }) {
+      handleErrors(status, setErrors, data);
     } finally {
       setLoading(false);
     }
@@ -105,15 +104,20 @@ export const DashboardPage = () => {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await axios.get('/api/v1/users/storage-stats', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const { status, data } = await axios.get(
+        `/api/v1/users/storage-stats?user_id=${user?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
-      setStorageStats(response.data);
-    } catch (error) {
-      console.error('Failed to fetch storage stats:', error);
+      if (status === 200) setStorageStats(data);
+
+      // @ts-expect-error
+    } catch ({ status, data }) {
+      handleErrors(status, setErrors, data);
     }
   };
 
@@ -137,8 +141,9 @@ export const DashboardPage = () => {
 
       setFiles((prevFiles) => prevFiles.filter((file) => file.id !== fileId));
       fetchStorageStats();
-    } catch (error) {
-      console.error('Failed to delete file:', error);
+      // @ts-expect-error
+    } catch ({ status, data }) {
+      handleErrors(status, setErrors, data);
     }
   };
 
@@ -156,7 +161,13 @@ export const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 ">
+        {errors.general && (
+          <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg">
+            {errors.general}
+          </div>
+        )}
+
         <div className="space-y-8">
           <FileList
             files={files}
