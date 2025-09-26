@@ -21,8 +21,8 @@ build-file:
 # Run services
 run: build
 	@echo "Starting both services..."
-	@echo "Auth service will run on port 8081"
-	@echo "File service will run on port 8080"
+	@echo "Auth service will run on port 8080"
+	@echo "File service will run on port 8081"
 	@echo "Press Ctrl+C to stop both services"
 	cd auth-service && ./auth-service &
 	cd file-service && ./file-service &
@@ -30,9 +30,9 @@ run: build
 
 # Run individual services
 auth-service: build-auth
-	@echo "Starting auth service on port 8081..."
+	@echo "Starting auth service on port 8080..."
 	cd auth-service && go run main.go
 
 file-service: build-file
-	@echo "Starting file service on port 8080..."
+	@echo "Starting file service on port 8081..."
 	cd file-service && go run main.go

@@ -43,7 +43,7 @@ func main() {
 
 	router.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads/"))))
 
-	port := config.GetEnv("PORT", "8080")
+	port := config.GetEnv("FILE_PORT", "8081")
 
 	log.Printf("File management service starting on port %s", port)
 	log.Printf("Upload directory: ./uploads")

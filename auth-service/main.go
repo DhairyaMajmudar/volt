@@ -37,7 +37,7 @@ func main() {
 
 	routes.SetupRoutes(router)
 
-	port := config.GetEnv("PORT", "8080")
+	port := config.GetEnv("AUTH_PORT", "8080")
 
 	log.Printf("Auth service starting on port %s", port)
 

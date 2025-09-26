@@ -34,8 +34,8 @@ COPY api-gateway/nginx.prod.conf /etc/nginx/nginx.conf
 # Copy supervisor configuration from api-gateway folder
 COPY api-gateway/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Create uploads directory
-RUN mkdir -p /var/uploads
+# Create uploads directory and set permissions
+RUN mkdir -p /var/uploads && chmod 755 /var/uploads
 
 # Create log directories
 RUN mkdir -p /var/log/supervisor
