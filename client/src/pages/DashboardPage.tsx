@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   FileList,
   FileUpload,
-  StorageStats,
-  Navbar,
   Footer,
+  Navbar,
+  StorageStats,
 } from '@/components';
 
 interface User {
