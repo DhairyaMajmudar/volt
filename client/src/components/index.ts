@@ -11,6 +11,7 @@ export { File } from './icons/File';
 export { GitHub } from './icons/GitHub';
 export { Loader } from './icons/Loader';
 export { Logo } from './icons/Logo';
+export { Delete } from './icons/Delete';
 export { Upload } from './icons/Upload';
 export { Navbar } from './Navbar';
 export { ProtectedRoute } from './ProtectedRoute';
