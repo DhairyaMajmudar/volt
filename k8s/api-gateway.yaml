@@ -89,7 +89,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: volt-api-gateway:latest
+          image: dhairya777/volt-api-gateway:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

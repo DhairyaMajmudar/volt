@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: volt-auth-service:latest
+          image: dhairya777/volt-auth-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
