@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Logo } from '@/components';
+import { useNavigate } from 'react-router-dom';
 
 export const Navbar = () => {
+  const navigate = useNavigate();
+
   const isAuthenticated = !!localStorage.getItem('token');
   const user = localStorage.getItem('user')
     ? JSON.parse(localStorage.getItem('user') as string)
@@ -10,9 +13,8 @@ export const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/';
+    navigate('/');
   };
-
   return (
     <nav className="border-b border-gray-200 sticky top-0 z-50 backdrop-blur-lg bg-white/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,19 +29,13 @@ export const Navbar = () => {
           <div className="flex items-center space-x-6">
             {isAuthenticated ? (
               <>
-                <span className="text-gray-600 font-medium">
+                <span className="text-gray-600 font-semibold">
                   Welcome, {user?.username || 'User'}!
                 </span>
-                <Link
-                  to="/dashboard"
-                  className="text-gray-700 hover:text-blue-700 transition-colors duration-200 font-medium px-3 py-2 hover:bg-gray-50 rounded-sm"
-                >
-                  Dashboard
-                </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="text-gray-700 hover:text-red-700 transition-colors duration-200 font-medium px-3 py-2 hover:bg-gray-50 rounded-sm"
+                  className="text-gray-700 hover:text-red-700 transition-colors duration-200 font-medium px-3 py-2 hover:bg-gray-50 rounded-sm cursor-pointer"
                 >
                   Logout
                 </button>
