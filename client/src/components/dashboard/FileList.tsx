@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { File, Loader, Delete } from '@/components';
+import { Delete, File, Loader } from '@/components';
 import { formatFileSize } from '@/utils/formatFileSize';
 
 interface FileData {
