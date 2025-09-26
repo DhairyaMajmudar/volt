@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const StorageStats = ({ stats }: Props) => {
-  const totalSizeFormatted = formatFileSize(stats.total_files);
+  const totalSizeFormatted = formatFileSize(stats.total_storage_used);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -31,16 +31,9 @@ export const StorageStats = ({ stats }: Props) => {
 
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-md p-4">
           <div className="text-2xl font-bold text-purple-700">
-            {stats.total_duplicates}
+            {stats.duplicate_files}
           </div>
           <div className="text-sm text-purple-600 font-medium">Duplicates</div>
-        </div>
-
-        <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-md p-4">
-          <div className="text-2xl font-bold text-orange-700">
-            {Object.keys(stats.storage_by_file_type).length}
-          </div>
-          <div className="text-sm text-orange-600 font-medium">File Types</div>
         </div>
       </div>
     </div>

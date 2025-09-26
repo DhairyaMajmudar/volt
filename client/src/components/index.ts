@@ -56,7 +56,6 @@ export interface FileData {
 export interface StorageStatsData {
   user_id: number;
   total_files: number;
-  total_size: number;
-  total_duplicates: number;
-  storage_by_file_type: Record<string, number>;
+  total_storage_used: number;
+  duplicate_files: number;
 }

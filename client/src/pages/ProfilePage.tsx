@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import type { FormErrors, StorageStatsData } from '@/components';
-import { Navbar } from '@/components';
-import { formatDate } from '@/utils/formatDate';
-import { formatFileSize } from '@/utils/formatFileSize';
-import { handleErrors } from '@/utils/handleError';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { FormErrors, StorageStatsData } from "@/components";
+import { Navbar } from "@/components";
+import { formatDate } from "@/utils/formatDate";
+import { formatFileSize } from "@/utils/formatFileSize";
+import { handleErrors } from "@/utils/handleError";
 
 interface UserProfile {
   id: number;
@@ -18,16 +18,16 @@ export const ProfilePage = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [storageStats, setStorageStats] = useState<StorageStatsData | null>(
-    null,
+    null
   );
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (!token) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -37,16 +37,16 @@ export const ProfilePage = () => {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        navigate('/login');
+        navigate("/login");
         return;
       }
 
-      const { status, data } = await axios.get('/api/v1/auth/profile', {
+      const { status, data } = await axios.get("/api/v1/auth/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -61,7 +61,7 @@ export const ProfilePage = () => {
 
   const fetchStorageStats = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
       const { status, data } = await axios.get(`/api/v1/users/storage-stats`, {
         headers: {
@@ -70,8 +70,6 @@ export const ProfilePage = () => {
       });
 
       if (status === 200) setStorageStats(data);
-
-      console.log(storageStats);
 
       // @ts-expect-error
     } catch ({ status, data }) {
@@ -91,6 +89,8 @@ export const ProfilePage = () => {
       </div>
     );
   }
+
+  console.log(storageStats);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -179,7 +179,18 @@ export const ProfilePage = () => {
                             Storage Used
                           </span>
                           <span className="text-lg font-bold text-green-600">
-                            {storageStats.total_size}
+                            {formatFileSize(storageStats.total_storage_used)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-yellow-900">
+                            Duplicates
+                          </span>
+                          <span className="text-lg font-bold text-yellow-600">
+                            {storageStats.duplicate_files}
                           </span>
                         </div>
                       </div>
@@ -190,7 +201,6 @@ export const ProfilePage = () => {
             </div>
           )}
         </div>
-        {/* </div> */}
       </main>
     </div>
   );
