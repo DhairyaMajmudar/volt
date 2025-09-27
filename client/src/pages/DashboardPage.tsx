@@ -127,21 +127,31 @@ export const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 ">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 space-y-6 md:space-y-8">
         {errors.general && (
           <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg">
             {errors.general}
           </div>
         )}
 
-        <div className="space-y-8">
-          <FileList
-            files={files}
-            onDeleteFile={handleFileDelete}
-            loading={loading}
-          />
-          <FileUpload onUploadSuccess={handleFileUpload} />
-          {storageStats && <StorageStats stats={storageStats} />}
+        <div className="space-y-6 md:space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="lg:col-span-2">
+              <FileUpload onUploadSuccess={handleFileUpload} />
+            </div>
+
+            <div className="lg:col-span-1">
+              {storageStats && <StorageStats stats={storageStats} />}
+            </div>
+          </div>
+
+          <div className="w-full">
+            <FileList
+              files={files}
+              onDeleteFile={handleFileDelete}
+              loading={loading}
+            />
+          </div>
         </div>
       </main>
       <Footer />

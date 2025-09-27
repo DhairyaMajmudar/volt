@@ -160,26 +160,28 @@ export const FileUpload = ({ onUploadSuccess }: Props) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Upload Files</h2>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+      <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">
+        Upload Files
+      </h2>
 
       <Uploady {...uploadyProps}>
         <UploadDropZone
           onDragOverClassName="border-blue-500 bg-blue-50"
-          className="border-2 border-dashed rounded-lg p-8 text-center transition-colors border-gray-300 hover:border-gray-400"
+          className="border-2 border-dashed rounded-lg p-6 md:p-8 text-center transition-colors border-gray-300 hover:border-gray-400"
         >
-          <div className="space-y-4">
-            <div className="mx-auto h-12 w-12 text-gray-400">
-              <Upload className="h-12 w-12" />
+          <div className="space-y-3 md:space-y-4">
+            <div className="mx-auto h-10 w-10 md:h-12 md:w-12 text-gray-400">
+              <Upload className="h-10 w-10 md:h-12 md:w-12" />
             </div>
 
             <div>
-              <p className="text-lg font-medium text-gray-900">
+              <p className="text-base md:text-lg font-medium text-gray-900">
                 Upload your files
               </p>
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-sm text-gray-600 mt-2 px-2">
                 Drag and drop files here, or{' '}
-                <UploadButton className="text-blue-600 hover:text-blue-800 font-medium bg-transparent border-none cursor-pointer p-0">
+                <UploadButton className="text-blue-600 hover:text-blue-800 font-medium bg-transparent border-none cursor-pointer p-0 underline">
                   browse
                 </UploadButton>
               </p>
