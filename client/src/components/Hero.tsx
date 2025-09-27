@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export const Hero = () => {
   return (
-    <section className="relative pt-8 md:pt-16 pb-16 md:pb-32 overflow-hidden">
+    <section className="relative pt-8 md:pt-16 pb-20 md:pb-32 overflow-hidden min-h-screen">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50" />
       <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-full max-w-6xl">
         <div className="absolute top-10 md:top-20 left-5 md:left-10 w-48 h-48 md:w-72 md:h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" />
