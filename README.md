@@ -1,6 +1,8 @@
-# Volt - Cloud Storage Platform
+# Volt 🚀
 
 A modern, scalable cloud storage platform built with microservices architecture. Volt provides secure file management, user authentication, and a responsive web interface, designed for high availability and performance.
+
+# Interfaces
 
 ## Overview
 
@@ -58,7 +60,7 @@ Handles user registration, authentication, and profile management with secure JW
 - **Password Security**: bcrypt encryption for password storage
 - **Database Integration**: PostgreSQL with GORM ORM
 
-📖 [Auth Service Docs](auth-service/README.md)
+[Auth Service Docs](auth-service/README.md)
 
 ### File Service
 
@@ -71,7 +73,7 @@ Manages file upload, storage, retrieval, and organization with advanced features
 - **Privacy Controls**: Public and private file visibility settings
 - **Storage Analytics**: Real-time storage statistics and usage tracking
 
-📖 [File Service Docs](file-service/README.md)
+[File Service Docs](file-service/README.md)
 
 ### Database Layer
 
@@ -82,7 +84,7 @@ Shared database configuration, models, and utilities used across all microservic
 - **Centralized Models**: User, File, and FileReference models
 - **Database Management**: Connection pooling, migrations, and configuration
 
-📖 [Database Docs](db/README.md)
+[Database Docs](db/README.md)
 
 ### API Gateway
 
@@ -94,7 +96,7 @@ High-performance reverse proxy that routes requests to appropriate microservices
 - **Load Balancing**: Distribute traffic across service instances
 - **Security**: Rate limiting, CORS, and security headers
 
-📖 [API Gateway Docs](api-gateway/README.md)
+[API Gateway Docs](api-gateway/README.md)
 
 ### Kubernetes Deployment
 
@@ -105,7 +107,7 @@ Kubernetes manifests for scalable deployment.
 - **Container Orchestration**: Complete Kubernetes deployment setup
 - **Development Tools**: Scripts for easy local development
 
-📖 [Kubernetes Docs](k8s/README.md)
+[Kubernetes Docs](k8s/README.md)
 
 ## Quick Start
 
@@ -248,6 +250,7 @@ We welcome contributions! Please see our contributing guidelines:
 
 ---
 
-<span style="text-align: center font-weight: bold">
-Built with ❤️ by the Dhairya Majmudar
-</span>
+<div align="center">
+<b>Made with ❤️ by <a href="https://github.com/DhairyaMajmudar">DhairyaMajmudar</a>
+</b>
+</div>
