@@ -17,6 +17,10 @@ DB module provides database connectivity, model definitions, migrations, and sha
 - **PostgreSQL**: Version 12 or higher
 - **Environment Variables**: Database configuration
 
+## ER Diagram
+
+<img width="602" height="450" alt="volt-db-model" src="https://github.com/user-attachments/assets/1ff740bc-a6d2-43a6-8334-e9439bbe296a" />
+
 ## Installation
 
 ### 1. Clone the Repository

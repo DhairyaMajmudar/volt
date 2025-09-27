@@ -122,6 +122,11 @@ kubectl scale deployment auth-service --replicas=3 -n volt
 kubectl edit configmap volt-config -n volt
 ```
 
+### Illustration
+
+<img width="700" height="500" alt="volt-k8s-k3d" src="https://github.com/user-attachments/assets/577a0c14-6047-4e4d-9eb4-f95a7046fd6d" />
+
+
 ## Contributing
 
 1. Fork the repository

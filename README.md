@@ -2,7 +2,13 @@
 
 A modern, scalable cloud storage platform built with microservices architecture. Volt provides secure file management, user authentication, and a responsive web interface, designed for high availability and performance.
 
-# Interfaces
+## Interfaces
+
+<img width="1914" height="907" alt="volt-homepage" src="https://github.com/user-attachments/assets/8b655405-945f-49ee-a2bb-88cdb69bfd9e" />
+
+<br/>
+
+**[More Images](client/README.md)**
 
 ## Overview
 
@@ -16,6 +22,8 @@ Volt is a full-stack cloud storage solution that combines:
 - **Production-Grade**: Load balancing, monitoring, and scaling
 
 ## Architecture
+
+<img width="700" height="500" alt="volt-architecture" src="https://github.com/user-attachments/assets/71492246-c7cd-47f2-bea3-5c70762124fa" />
 
 ## Project Structure
 
@@ -108,6 +116,15 @@ Kubernetes manifests for scalable deployment.
 - **Development Tools**: Scripts for easy local development
 
 [Kubernetes Docs](k8s/README.md)
+
+### Containerised Services
+
+The file service, auth service and the api gateway is containerised using docker
+thier images are also pushed into Docker Hub
+
+- **File service image**: dhairya777/volt-file-service
+- **Auth service image**: dhairya777/volt-auth-service
+- **API gateway image**: dhairya777/volt-api-gateway
 
 ## Quick Start
 
@@ -228,6 +245,11 @@ DB_PORT=5432
 DB_NAME=voltdb
 DB_USER=postgres
 DB_PASSWORD=postgres
+
+# Production
+DATABASE_URL=db_url_from_cloud_db_provider
+APP_MODE=production
+JWT_SECRET=your-secret-key
 ```
 
 ### Production Configuration

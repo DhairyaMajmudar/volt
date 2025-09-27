@@ -86,11 +86,25 @@ npm run lint:fix
 
 ### Pages
 
-- **LandingPage**: Welcome page with app introduction
-- **LoginPage**: User authentication form
+**LandingPage**: Welcome page with app introduction
+
+<img width="1914" height="907" alt="volt-homepage" src="https://github.com/user-attachments/assets/1960ef03-6540-40a5-a685-3f2031402e0f" />
+
+**LoginPage**: User authentication form
+
+<img width="1914" height="907" alt="volt-login" src="https://github.com/user-attachments/assets/ef1f02fa-31f9-48d4-93cd-43450870fb78" />
+
 - **RegisterPage**: User registration form
-- **DashboardPage**: File management dashboard
-- **ProfilePage**: User profile management
+
+<img width="1914" height="907" alt="volt-register" src="https://github.com/user-attachments/assets/6c84eabe-2cf2-4bee-898f-6216c15ff73b" />
+
+**DashboardPage**: File management dashboard
+
+<img width="1920" height="1488" alt="volt-dashboard" src="https://github.com/user-attachments/assets/4107e7dd-90e1-4b10-92f8-dc264e2fd9fc" />
+
+**ProfilePage**: User profile management
+
+<img width="1914" height="907" alt="volt-profile" src="https://github.com/user-attachments/assets/d4458ea1-0953-476f-a73e-fbf7745d064e" />
 
 ## Development Tools
 
