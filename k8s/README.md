@@ -25,13 +25,29 @@ k8s/
 └── README.md                 # This file
 ```
 
-## Deployment Steps
+## Deployment Steps (Scrips)
+
+- Create a local k8s cluster using kind or k3d
+- Run k8s/deploy-k8s.sh script
+
+```bash
+# Move to k8s dir
+cd k8s/
+
+# Make script executable
+chmod +x deploy-k8s.sh
+
+# Run script (applys manifest files with appropriate time)
+sh ./deploy-k8s.sh
+```
+
+## Deployment Steps (Manual)
 
 ### 1. Create kind cluster and set context with kubectl
 
 ```bash
 # bash
-kind cluster create volt-cluster
+k3d cluster create volt-cluster
 
 # check currect kubectl context it should be k3d-volt-cluster
 kubectl config current-context
